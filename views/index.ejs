@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .main-content {
+            min-height: calc(100vh - 80px); /* Adjust based on navbar height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 20px;
+        }
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px 20px 0 0 !important;
+            border: none;
+            padding: 2rem;
+        }
+        .btn-custom {
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            margin: 10px;
+            min-width: 200px;
+        }
+        .btn-users {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+        }
+        .btn-users:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        .btn-nusers {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            color: white;
+        }
+        .btn-nusers:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(240, 147, 251, 0.4);
+            color: white;
+        }
+        .card-body {
+            padding: 3rem;
+        }
+        .welcome-text {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('./partials/navbar.ejs') %>
+
+    <div class="main-content">
+        <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h1 class="mb-0">🚀 API Dashboard</h1>
+                        <p class="mb-0 mt-2">Choose your API endpoint</p>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="welcome-text">
+                            <p><%= title %></p>
+                            <p>Select an API to explore:</p>
+                        </div>
+                        
+                        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center">
+                            <button class="btn btn-custom btn-users" onclick="callUsersAPI()">
+                                <i class="fas fa-users me-2"></i>
+                                Users API
+                            </button>
+                            
+                            <button class="btn btn-custom btn-nusers" onclick="callNUsersAPI()">
+                                <i class="fas fa-globe me-2"></i>
+                                External API
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <small class="text-muted">
+                                Users API: Local JSON data | External API: Third-party data
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+    <script>
+        function callUsersAPI() {
+            // Call the users API route
+            window.location.href = '/api/users';
+        }
+        
+        function callNUsersAPI() {
+            // Call the nusers API route
+            window.location.href = '/nusers';
+        }
+    </script>
+</body>
+</html>

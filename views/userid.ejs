@@ -10,6 +10,12 @@
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .main-content {
+            min-height: calc(100vh - 80px);
             padding: 20px 0;
         }
         .user-card {
@@ -99,11 +105,15 @@
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <%- include('./partials/navbar.ejs') %>
+
+    <div class="main-content">
+        <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-6 col-md-8 col-sm-10">
                 <div class="text-center mb-4">
-                    <a href="/api   /users" class="back-btn">
+                    <a href="/api/users" class="back-btn">
                         <i class="fas fa-arrow-left"></i>
                         Back to Users
                     </a>
@@ -162,6 +172,7 @@
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </div>
 

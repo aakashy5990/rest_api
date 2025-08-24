@@ -10,6 +10,12 @@
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .main-content {
+            min-height: calc(100vh - 80px);
             padding: 20px 0;
         }
         .card {
@@ -115,14 +121,17 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="text-center mb-4">
+    <%- include('./partials/navbar.ejs') %>
+    
+    <div class="main-content">
+        <div class="container">
+        <!-- <div class="text-center mb-4">
             <a href="/api/users" class="back-btn">
                 <i class="fas fa-arrow-left"></i>
                 Back to Users
             </a>
         </div>
-        
+         -->
         <h1 class="page-title">User Data from External API</h1>
         
         <div class="row">
@@ -186,6 +195,7 @@
                     </div>
                 </div>
             <% }); %>
+        </div>
         </div>
     </div>
 
