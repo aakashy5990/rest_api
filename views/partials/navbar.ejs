@@ -53,6 +53,16 @@
                         </a></li>
                     </ul>
                 </li>
+                
+                <!-- Logout Button - Only show when user is logged in -->
+                <!-- <% if (typeof user !== 'undefined' && user) { %> -->
+                    <li class="nav-item">
+                        <a class="nav-link logout-btn" href="/logout" onclick="">
+                            <i class="fas fa-sign-out-alt me-1"></i>
+                            Logout
+                        </a>
+                    </li>
+                <!-- <% } %> -->
             </ul>
         </div>
     </div>
@@ -92,6 +102,18 @@
         font-weight: 600;
     }
     
+    .logout-btn {
+        background-color: rgba(220, 53, 69, 0.2);
+        border: 1px solid rgba(220, 53, 69, 0.3);
+        color: #fff !important;
+    }
+    
+    .logout-btn:hover {
+        background-color: rgba(220, 53, 69, 0.4) !important;
+        border-color: rgba(220, 53, 69, 0.5);
+        transform: translateY(-1px);
+    }
+    
     .dropdown-menu {
         border: none;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -128,6 +150,10 @@
 <script>
     function showApiInfo() {
         alert('API Dashboard\n\n• Users API: Local JSON data from MOCK_DATA.json\n• External API: Third-party data from environment variable\n• JSON API: Raw JSON response at /users endpoint');
+    }
+    
+    function confirmLogout() {
+        return confirm('Are you sure you want to logout?');
     }
     
     // Add active class based on current page

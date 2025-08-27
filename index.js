@@ -1,11 +1,19 @@
-const { getData } = require("./api");
 const fs = require("fs");
+const mongoose = require("mongoose");
+const cookieParser = require('cookie-parser');
+const { restrictToLoggedinUserOnly } = require("./middlewares/auth");
+// import maintenance middleware
+const { maintenanceMiddleware } = require("./middlewares/maintenanceMiddleware");
 
 // Load environment variables from .env file
 require('dotenv').config();
 
 let users = require('./MOCK_DATA.json');
 
+const userRoute = require('./routes/user');
+const staticRoute = require('./routes/staticRoutes');
+const externalapi = require('./routes/externalapi');
+const internalapi = require('./routes/internalapi');
 const express = require("express");
 
 const app = express();
@@ -13,57 +21,37 @@ const app = express();
 // Set view engine
 app.set('view engine', 'ejs');
 
+// MAINTENANCE FIRST
+app.use(maintenanceMiddleware);
+
 // Middleware
 app.use(express.json());
 // adding form data in body 
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 app.use(express.static('public'));
 
 // Use environment variables
 const PORT = process.env.PORT || 3000;
+const URI = process.env.MongoUrl;
+
+mongoose.connect(URI)
+  .then(() => console.log("✅ MongoDB connected successfully"))
+  .catch(err => console.error("❌ MongoDB connection error:", err));
+
+  
+app.use(staticRoute);
+app.use(userRoute);
+app.use(internalapi,restrictToLoggedinUserOnly);
+app.use(externalapi);
 
 
-app.get("/nusers", async (req,res) =>{
-    try{
-        console.log("Fetching data from API...");
-        const data  = await getData();
-        // console.log("Data received:", data);
-        if (!data) {
-            console.log("No data received, rendering empty array");
-            return res.render("nextapi", { data: [] });
-        }
-        // return res.json(data);
-        return res.render("nextapi",{data});
-    }
-    catch(error){
-        console.log("Error in route:", error);
-        return res.render("nextapi", { data: [] });
-    }
-})
-
-
-app.get("/",(req,res) =>{
-    return res.render("index",{title:"welcome to the page"});
-})
-
-app.get("/users", (req,res) =>{
+app.get("/users", (req,res) => {
     // return res.json(userdata);
     return res.json(users);
 })
 
-
-app.get("/api/users", (req,res) =>{
-    return res.render('home',{users});
-})
-
-app.route("/api/users/:id").get((req,res) =>{
-    const id = Number(req.params.id);
-    const user = users.find((user)=> user.id === id);
-    if (!user) {
-        return res.status(404).send('User not found');
-    }
-    return res.render('userid',{user});
-}).put((req,res) => {
+app.route("/api/users/:id").put((req,res) => {
     try {
         // edit user with id 
         const id = Number(req.params.id);
@@ -123,9 +111,6 @@ app.route("/api/users/:id").get((req,res) =>{
     });
 })
 
-
-
-// app.get("/api/users/:id",)
 
 app.post("/api/users",(req,res)=>{
     // add the user 

@@ -135,6 +135,7 @@
         <h1 class="page-title">User Data from External API</h1>
         
         <div class="row">
+            <% if(data){ %>
             <% data.forEach(function(user) { %>
                 <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
                     <div class="card h-100">
@@ -195,6 +196,11 @@
                     </div>
                 </div>
             <% }); %>
+            <% } else { %>
+                <div class="col-12">
+                    <div class="alert alert-info">No data available</div>
+                </div>
+            <% } %>
         </div>
         </div>
     </div>

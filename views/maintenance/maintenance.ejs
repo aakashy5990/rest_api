@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Under Maintenance - API Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .main-content {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .maintenance-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 600px;
+            width: 100%;
+            margin: 20px;
+        }
+
+        .maintenance-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .maintenance-body {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .maintenance-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 8px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            width: 75%;
+            border-radius: 10px;
+            animation: progress-animation 2s ease-in-out infinite;
+        }
+
+        @keyframes progress-animation {
+            0%, 100% { width: 75%; }
+            50% { width: 85%; }
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #28a745;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .estimated-time {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            padding: 0.75rem;
+            margin: 0.75rem 0;
+            color: #667eea;
+        }
+
+        .contact-info {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .btn-refresh {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-refresh:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 576px) {
+            .maintenance-card {
+                margin: 10px;
+            }
+            .maintenance-header {
+                padding: 1.5rem;
+            }
+            .maintenance-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/navbar.ejs') %>
+
+    <div class="main-content">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="maintenance-card">
+                        <div class="maintenance-header">
+                            <h2 class="mb-0">
+                                <i class="fas fa-tools me-2"></i>
+                                Site Under Maintenance
+                            </h2>
+                            <p class="mb-0 mt-2 opacity-75">We're working hard to improve your experience</p>
+                        </div>
+
+                        <div class="maintenance-body">
+                            <div class="maintenance-icon">
+                                <i class="fas fa-cog fa-spin"></i>
+                            </div>
+
+                            <h3 class="mb-3">We'll be back soon!</h3>
+                            <p class="text-muted mb-4">
+                                Our team is currently performing scheduled maintenance to enhance the system. 
+                                We apologize for any inconvenience this may cause.
+                            </p>
+
+                            <% if (typeof progress !== 'undefined' && progress) { %>
+                                <div class="estimated-time">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Status:</strong> <%= progress %>
+                                </div>
+                            <% } %>
+
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+
+                            <div class="status-indicator"></div>
+                            <span class="text-muted">Maintenance in progress</span>
+
+                            <div class="contact-info">
+                                <p class="text-muted mb-2">
+                                    <i class="fas fa-clock me-2"></i>
+                                    Estimated completion: 2-3 hours
+                                </p>
+                                <p class="text-muted mb-3">
+                                    <i class="fas fa-envelope me-2"></i>
+                                    For urgent matters, contact: support@example.com
+                                </p>
+                                
+                                <!-- <button class="btn btn-refresh btn-primary" onclick="location.reload()">
+                                    <i class="fas fa-sync-alt me-2"></i>
+                                    Check Status
+                                </button> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
