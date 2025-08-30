@@ -50,7 +50,7 @@ app.use((req, res, next) => {
 
 // Use environment variables
 const PORT = process.env.PORT || 3000;
-const URI = process.env.MongoUrl;
+const URI = process.env.MONGODB_URI;
 
 mongoose.connect(URI)
   .then(() => {
