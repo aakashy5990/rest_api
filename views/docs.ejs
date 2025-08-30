@@ -169,6 +169,7 @@
                     <li><a href="#endpoints">🔗 API Endpoints</a></li>
                     <li><a href="#array-creation">📊 Array Data Creation</a></li>
                     <li><a href="#examples">💡 Usage Examples</a></li>
+                    <li><a href="#deployment">🚀 Deployment</a></li>
                     <li><a href="#error-handling">⚠️ Error Handling</a></li>
                     <li><a href="#rate-limits">⏱️ Rate Limits</a></li>
                     <li><a href="#support">💬 Support</a></li>
@@ -679,6 +680,75 @@ await createArrayDataset('Product Catalog', productEntries);</code></pre>
                     <code>X-RateLimit-Limit: 100</code><br>
                     <code>X-RateLimit-Remaining: 95</code><br>
                     <code>X-RateLimit-Reset: 1642233600</code>
+                </div>
+            </div>
+
+            <!-- Deployment Section -->
+            <div class="docs-section" id="deployment">
+                <h3><i class="fas fa-rocket me-2"></i>Deployment</h3>
+                
+                <p>Deploy your API Dashboard to production using Render.com for seamless hosting and scaling.</p>
+                
+                <h5>Deployment Options</h5>
+                
+                <div class="feature-card">
+                    <h6><i class="fas fa-cloud me-2"></i>Render.com (Recommended)</h6>
+                    <p>Deploy with zero configuration using Render's managed platform.</p>
+                    <ul>
+                        <li><strong>Automatic Deploys:</strong> Deploy on every Git push</li>
+                        <li><strong>Managed Database:</strong> Built-in MongoDB support</li>
+                        <li><strong>SSL/HTTPS:</strong> Automatic SSL certificates</li>
+                        <li><strong>Custom Domains:</strong> Use your own domain</li>
+                        <li><strong>Environment Variables:</strong> Secure configuration management</li>
+                    </ul>
+                </div>
+
+                <h5>Quick Deploy Steps</h5>
+                <ol>
+                    <li><strong>Connect Repository:</strong> Link your GitHub/GitLab repo to Render</li>
+                    <li><strong>Create Web Service:</strong> Choose "Web Service" from Render dashboard</li>
+                    <li><strong>Configure Build:</strong> Set build command: <code>npm install</code></li>
+                    <li><strong>Set Start Command:</strong> Use: <code>npm start</code></li>
+                    <li><strong>Add Environment Variables:</strong> Configure MONGODB_URI, JWT_SECRET, etc.</li>
+                    <li><strong>Deploy:</strong> Click "Create Web Service"</li>
+                </ol>
+
+                <h5>Environment Variables</h5>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                    <pre><code># Required Environment Variables
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/database_name
+JWT_SECRET=your-super-secret-jwt-key-here
+NODE_ENV=production
+PORT=10000
+
+# Optional Variables
+EXTERNAL_API_KEY=your-external-api-key</code></pre>
+                </div>
+
+                <h5>Database Setup</h5>
+                <p>For production, we recommend using Render's managed MongoDB or MongoDB Atlas:</p>
+                <ul>
+                    <li><strong>Render MongoDB:</strong> Create a new MongoDB database in Render dashboard</li>
+                    <li><strong>MongoDB Atlas:</strong> Use your existing Atlas cluster</li>
+                    <li><strong>Connection String:</strong> Update MONGODB_URI with your production database</li>
+                </ul>
+
+                <h5>Custom Domain Setup</h5>
+                <ol>
+                    <li>Add your domain in Render dashboard</li>
+                    <li>Update DNS records to point to Render</li>
+                    <li>SSL certificate will be automatically provisioned</li>
+                </ol>
+
+                <div class="feature-card">
+                    <h6><i class="fas fa-shield-alt me-2"></i>Security Best Practices</h6>
+                    <ul>
+                        <li><strong>Strong JWT Secret:</strong> Use a long, random string</li>
+                        <li><strong>Environment Variables:</strong> Never commit secrets to Git</li>
+                        <li><strong>HTTPS Only:</strong> Always use HTTPS in production</li>
+                        <li><strong>Database Security:</strong> Use connection strings with authentication</li>
+                    </ul>
                 </div>
             </div>
 

@@ -89,6 +89,14 @@
                         <p class="mb-0 mt-2">Choose your API endpoint</p>
                     </div>
                     <div class="card-body text-center">
+                        <% if (typeof success !== 'undefined' && success) { %>
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <%= success %>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        <% } %>
+                        
                         <div class="welcome-text">
                             <p><%= title %></p>
                             <p>Select an API to explore:</p>

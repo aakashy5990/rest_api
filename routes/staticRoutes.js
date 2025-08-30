@@ -38,7 +38,11 @@ router.get('/docs', (req,res) =>{
 
 router.get('/logout', (req, res) => {
     res.clearCookie('uid');
-    return res.redirect('/');
+    return res.render("index", {
+        title: "Welcome to the page", 
+        user: null, 
+        success: "You have been successfully logged out!"
+    });
 });
 
 module.exports = router;

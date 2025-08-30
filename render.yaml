@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: api-dashboard
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        fromDatabase:
+          name: api-dashboard-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT
+        value: 10000
+
+databases:
+  - name: api-dashboard-db
+    databaseName: api_dashboard
+    user: api_dashboard_user
