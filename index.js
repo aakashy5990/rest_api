@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const cookieParser = require('cookie-parser');
 const { restrictToLoggedinUserOnly } = require("./middlewares/auth");
 const { getUser } = require("./service/auth");
@@ -52,16 +53,26 @@ app.use((req, res, next) => {
 const PORT = process.env.PORT || 3000;
 const URI = process.env.MONGODB_URI;
 
-mongoose.connect(URI)
-  .then(() => {
-    console.log("✅ MongoDB connected successfully");
-    try {
-      const dbName = mongoose.connection.name || mongoose.connection.db?.databaseName;
-      if (dbName) console.log(`🗄️  MongoDB database: ${dbName}`);
-    } catch (_) {}
-  })
-  .catch(err => console.error("❌ MongoDB connection error:", err));
+mongoose.connect(process.env.MONGODB_URI)
+  .then(async () => {
+    console.log("Connected to DB");
 
+    const users = await User.find({});
+
+    for (let user of users) {
+      // Skip already hashed passwords
+      if (!user.password.startsWith("$2b$")) {
+        const hashed = await bcrypt.hash(user.password, 12);
+        user.password = hashed;
+        await user.save();
+        console.log(`Hashed password for: ${user.username}`);
+      }
+    }
+
+    console.log("✅ Done hashing passwords");
+    process.exit();
+  })
+  .catch(err => console.error(err));
   
 app.use(staticRoute);
 app.use('/api', internalapi);
