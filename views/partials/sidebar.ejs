@@ -1,0 +1,79 @@
+<aside class="sidebar p-3">
+    <div class="d-flex align-items-center mb-3 sidebar-brand">
+        <i class="fas fa-gauge-high me-2"></i>
+        <strong>API Dashboard</strong>
+    </div>
+    <ul class="list-unstyled mb-0 menu-list">
+        <li class="mb-2">
+            <a href="/" class="text-decoration-none d-flex align-items-center px-2 py-2 rounded hover-bg">
+                <i class="fas fa-home me-2"></i>
+                <span>Home</span>
+            </a>
+        </li>
+        <li class="mb-2">
+            <a href="/createjson" class="text-decoration-none d-flex align-items-center px-2 py-2 rounded hover-bg">
+                <i class="fas fa-plus-circle me-2"></i>
+                <span>Create Json</span>
+            </a>
+        </li>
+        <li class="mb-2">
+            <a href="/dummyjson" class="text-decoration-none d-flex align-items-center px-2 py-2 rounded hover-bg">
+                <i class="fas fa-random me-2"></i>
+                <span>Dummy Json</span>
+            </a>
+        </li>
+        
+        <li class="mt-2">
+            <a href="/adddata" class="btn btn-sm w-100 text-start d-flex align-items-center justify-content-center" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #001; border: none;">
+                <i class="fas fa-plus me-2"></i>
+                Add Data
+            </a>
+        </li>
+        <li class="mt-2">
+            <a href="/my/datasets" class="btn btn-sm w-100 text-start d-flex align-items-center justify-content-center text-decoration-none" style="background: linear-gradient(135deg, #ffd86f 0%, #fc6262 100%); color: #001; border: none;">
+                <i class="fas fa-list me-2"></i>
+                My Data
+            </a>
+        </li>
+        <li class="mb-2">
+        </li>
+        <li class="mb-2">
+            <a href="/users" class="text-decoration-none d-flex align-items-center px-2 py-2 rounded hover-bg">
+                <i class="fas fa-code me-2"></i>
+                <span>JSON API</span>
+            </a>
+        </li>
+        <li class="api-info pt-2 border-top">
+            <a href="javascript:void(0)" class="text-decoration-none d-flex align-items-center px-2 py-2 rounded hover-bg" onclick="showApiInfo()">
+                <i class="fas fa-info-circle me-2"></i>
+                <span>API Info</span>
+            </a>
+        </li>
+    </ul>
+
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            height: calc(100vh - 80px);
+            width: 260px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-right: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            overflow-y: auto;
+            z-index: 1030;
+        }
+        .sidebar { display: flex; flex-direction: column; }
+        .sidebar .menu-list { flex: 1; display: flex; flex-direction: column; }
+        .sidebar .menu-list .api-info { margin-top: auto; }
+        .sidebar a { color: #e9edff; }
+        .sidebar a:hover { color: #ffffff; }
+        .hover-bg:hover { background: rgba(255, 255, 255, 0.08); }
+        .sidebar-brand { font-size: 1.1rem; opacity: 0.95; }
+        .sidebar ::-webkit-scrollbar { width: 6px; }
+        .sidebar ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+    </style>
+</aside>
+

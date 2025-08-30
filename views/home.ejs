@@ -122,88 +122,18 @@
     </style>
 </head>
 <body>
+    <%- include('./partials/theme.ejs') %>
 
-    <%- include('./partials/navbar.ejs') %>
+    <%- include('./partials/dasboardnav.ejs') %>
     
     <div class="container">
         <h1 class="page-title">User Data Cards</h1>
         
         <div class="row">
-            <% users.forEach(function(user) { %>
-                <% if(user && user.first_name && user.last_name) { %>
-                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                        <div class="card h-100">
-                            <div class="card-header">
-                                <div class="user-avatar">
-                                    <%= user.first_name.charAt(0) + user.last_name.charAt(0) %>
-                                </div>
-                                <h5 class="card-title mb-0">
-                                    <%= user.first_name %> <%= user.last_name %>
-                                </h5>
-                            </div>
+            <%- include('./partials/sidebar.ejs') %>
+            <div class="col-12" style="margin-left: 260px;">
             
-                            <div class="card-body">
-                                <div class="info-item">
-                                    <div class="info-icon"><i class="fas fa-id-badge"></i></div>
-                                    <div class="info-content">
-                                        <div class="info-label">ID</div>
-                                        <div class="info-value">#<%= user.id || 'N/A' %></div>
-                                    </div>
-                                </div>
-            
-                                <div class="info-item">
-                                    <div class="info-icon"><i class="fas fa-briefcase"></i></div>
-                                    <div class="info-content">
-                                        <div class="info-label">Job Title</div>
-                                        <div class="info-value"><%= user.job_title || 'N/A' %></div>
-                                    </div>
-                                </div>
-            
-                                <div class="info-item">
-                                    <div class="info-icon"><i class="fas fa-envelope"></i></div>
-                                    <div class="info-content">
-                                        <div class="info-label">Email</div>
-                                        <div class="info-value">
-                                            <a href="mailto:<%= user.email || '' %>" class="text-decoration-none">
-                                                <%= user.email || 'N/A' %>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-            
-                                <div class="info-item">
-                                    <div class="info-icon"><i class="fas fa-venus-mars"></i></div>
-                                    <div class="info-content">
-                                        <div class="info-label">Gender</div>
-                                        <div class="info-value">
-                                            <% if(user.gender === 'Female') { %>
-                                                <span class="badge bg-success gender-badge">
-                                                    <i class="fas fa-venus me-1"></i><%= user.gender %>
-                                                </span>
-                                            <% } else if(user.gender) { %>
-                                                <span class="badge bg-primary gender-badge">
-                                                    <i class="fas fa-mars me-1"></i><%= user.gender %>
-                                                </span>
-                                            <% } else { %>
-                                                <span class="badge bg-secondary gender-badge">N/A</span>
-                                            <% } %>
-                                        </div>
-                                    </div>
-                                </div>
-            
-                                <div class="text-center mt-3">
-                                    <a class="profile-btn" href="/api/users/<%= user.id || '#' %>">
-                                        <i class="fas fa-user"></i> View Profile
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <% } else { %>
-                    <p class="alert alert-danger text-center fs-4">There Not Found data</p>
-                <% } %>
-            <% }); %>
-            
+            </div>
         </div>
     </div>
 

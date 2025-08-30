@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Dummy Json' %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0; }
+        .builder-container { max-width: 100%; }
+        .builder-scroll { max-height: 80vh; overflow: auto; }
+        .field-row { background: rgba(255,255,255,0.9); border-radius: 10px; padding: 12px; border: 1px solid #eee; }
+        .json-preview { white-space: pre-wrap; overflow-y: auto; overflow-x: hidden; background: #0f172a; color: #e2e8f0; border-radius: 10px; padding: 16px; min-height: 160px; }
+        .chip { background: rgba(102,126,234,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 999px; font-size: 12px; }
+        .sticky-actions { position: sticky; top: 90px; z-index: 2; }
+        .cj-fluid { margin-left: 260px; padding: 0; width: calc(100% - 260px); }
+        .builder-container .row { margin-top: 0 !important; margin-right: 0 !important; }
+    </style>
+</head>
+<body>
+    <%- include('../partials/dasboardnav.ejs') %>
+    <%- include('../partials/sidebar.ejs') %>
+
+    <div class="container-fluid cj-fluid">
+        <div class="row g-4 w-100">
+            <div class="col-12">
+                <div class="builder-container mx-auto">
+                <div class="card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-dice me-2"></i>Dummy JSON</h5>
+                        <span class="chip">Add fields, choose count, press Enter</span>
+                    </div>
+                    <div class="card-body builder-scroll">
+                        <div class="row g-3 align-items-end mb-3 field-row">
+                            <div class="col-md-4">
+                                <label class="form-label">Field name</label>
+                                <input id="fieldName" class="form-control" placeholder="e.g., name, email, age" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Type</label>
+                                <select id="fieldType" class="form-select">
+                                    <option value="name">Name</option>
+                                    <option value="email">Email</option>
+                                    <option value="number">Number</option>
+                                    <option value="bool">Boolean</option>
+                                    <option value="date">Date</option>
+                                    <option value="uuid">UUID</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Count</label>
+                                <input id="rowCount" type="number" min="1" value="5" class="form-control" />
+                            </div>
+                            <div class="col-md-2 d-grid">
+                                <button id="generateBtn" class="btn btn-primary"><i class="fas fa-bolt me-1"></i>Generate</button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive mb-3">
+                            <table class="table table-sm align-middle table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th style="width:30%">Name</th>
+                                        <th style="width:30%">Type</th>
+                                        <th style="width:80px"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fieldsTable"></tbody>
+                            </table>
+                        </div>
+
+                        <div id="messageBox" class="alert d-none" role="alert"></div>
+                        <div class="row g-3">
+                            <div class="col-lg-6">
+                                <div class="sticky-actions d-flex gap-2 mb-2">
+                                    <button id="copyJsonBtn" class="btn btn-outline-light"><i class="fas fa-copy me-1"></i>Copy JSON</button>
+                                    <button id="downloadJsonBtn" class="btn btn-success"><i class="fas fa-download me-1"></i>Download</button>
+                                    <button id="clearBtn" class="btn btn-danger"><i class="fas fa-trash me-1"></i>Clear All</button>
+                                </div>
+                                <div class="json-preview" id="jsonPreview">[]</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const fieldsTable = document.getElementById('fieldsTable');
+        const fieldNameEl = document.getElementById('fieldName');
+        const fieldTypeEl = document.getElementById('fieldType');
+        const rowCountEl = document.getElementById('rowCount');
+        const generateBtn = document.getElementById('generateBtn');
+        const copyBtn = document.getElementById('copyJsonBtn');
+        const downloadBtn = document.getElementById('downloadJsonBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const jsonPreview = document.getElementById('jsonPreview');
+
+        const fields = [];
+
+        function addFieldRow(name, type){
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input class="form-control form-control-sm name-input" value="${name}" /></td>
+                <td>
+                    <select class="form-select form-select-sm type-select">
+                        <option value="name" ${type==='name'?'selected':''}>Name</option>
+                        <option value="email" ${type==='email'?'selected':''}>Email</option>
+                        <option value="number" ${type==='number'?'selected':''}>Number</option>
+                        <option value="bool" ${type==='bool'?'selected':''}>Boolean</option>
+                        <option value="date" ${type==='date'?'selected':''}>Date</option>
+                        <option value="uuid" ${type==='uuid'?'selected':''}>UUID</option>
+                    </select>
+                </td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-outline-danger remove-btn"><i class="fas fa-times"></i></button>
+                </td>`;
+
+            const nameInput = tr.querySelector('.name-input');
+            const typeSelect = tr.querySelector('.type-select');
+            const removeBtn = tr.querySelector('.remove-btn');
+
+            function sync(){
+                const idx = Array.from(fieldsTable.children).indexOf(tr);
+                fields[idx] = { name: nameInput.value.trim(), type: typeSelect.value };
+            }
+
+            tr.addEventListener('input', sync);
+            removeBtn.addEventListener('click', (e)=>{
+                e.preventDefault();
+                const idx = Array.from(fieldsTable.children).indexOf(tr);
+                fields.splice(idx,1);
+                tr.remove();
+                render();
+            });
+
+            fieldsTable.appendChild(tr);
+            fields.push({ name, type });
+        }
+
+        function randomFor(type){
+            if(type==='name'){
+                const first = ['Ava','Liam','Noah','Mia','Ethan','Zara','Ivy','Leo'];
+                const last = ['Smith','Patel','Khan','Garcia','Brown','Roy','Ali','Shah'];
+                return first[Math.floor(Math.random()*first.length)]+' '+last[Math.floor(Math.random()*last.length)];
+            }
+            if(type==='email'){
+                const user = Math.random().toString(36).slice(2,8);
+                const domain = ['example.com','mail.com','test.org'][Math.floor(Math.random()*3)];
+                return user+'@'+domain;
+            }
+            if(type==='number') return Math.floor(Math.random()*1000);
+            if(type==='bool') return Math.random()<0.5;
+            if(type==='date') return new Date(Date.now()-Math.floor(Math.random()*3.15e10)).toISOString();
+            if(type==='uuid') return URL.createObjectURL(new Blob()).split('/').pop();
+            return '';
+        }
+
+        function render(){
+            const count = Math.max(1, Number(rowCountEl.value || 1));
+            const arr = [];
+            for(let i=0;i<count;i++){
+                const obj = {};
+                fields.forEach(f=>{ obj[f.name] = randomFor(f.type); });
+                arr.push(obj);
+            }
+            jsonPreview.textContent = JSON.stringify(arr, null, 2);
+        }
+
+        // Add with Enter key
+        fieldNameEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); add(); }});
+        rowCountEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); render(); }});
+
+        function showMessage(message, type = 'danger'){
+            const box = document.getElementById('messageBox');
+            box.className = `alert alert-${type}`;
+            box.textContent = message;
+            box.classList.remove('d-none');
+            setTimeout(()=> box.classList.add('d-none'), 2500);
+        }
+
+        function add(){
+            const name = (fieldNameEl.value||'').trim();
+            const type = fieldTypeEl.value;
+            if(!name) return showMessage('Field name required');
+            addFieldRow(name, type);
+            fieldNameEl.value='';
+            render();
+        }
+
+        document.getElementById('generateBtn').addEventListener('click', (e)=>{ e.preventDefault(); add(); });
+        copyBtn.addEventListener('click', async ()=>{
+            try {
+                await navigator.clipboard.writeText(jsonPreview.textContent);
+                showMessage('JSON copied to clipboard', 'success');
+            } catch {
+                showMessage('Copy failed', 'danger');
+            }
+        });
+        downloadBtn.addEventListener('click', ()=>{
+            const blob = new Blob([jsonPreview.textContent], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'dummy.json'; a.click();
+            URL.revokeObjectURL(url);
+        });
+        clearBtn.addEventListener('click', ()=>{
+            fields.length = 0; fieldsTable.innerHTML = ''; jsonPreview.textContent = '[]';
+        });
+
+        render();
+    </script>
+</body>
+</html>
+

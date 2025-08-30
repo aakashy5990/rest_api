@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0; }
+        .cj-fluid { margin-left: 260px; padding: 0; width: calc(100% - 260px); }
+        .builder-container .row { margin-top: 0 !important; margin-right: 0 !important; }
+    </style>
+</head>
+<body>
+    <%- include('../partials/dasboardnav.ejs') %>
+    <%- include('../partials/sidebar.ejs') %>
+
+    <div class="container-fluid cj-fluid" style="margin-left:260px; width:calc(100% - 260px)">
+        <!-- Breadcrumb Navigation -->
+        <nav aria-label="breadcrumb" class="mt-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/dashboard" class="text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">My Data</li>
+            </ol>
+        </nav>
+        
+        <div class="row mt-3 w-100">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <a href="/dashboard" class="btn btn-primary">
+                                <i class="fas fa-home me-1"></i>Dashboard
+                            </a>
+                            <h5 class="mb-0">My Data</h5>
+                        </div>
+                        <a href="/adddata" class="btn btn-sm btn-primary">Add New</a>
+                    </div>
+                    <div class="card-body">
+                        <% if (typeof error !== 'undefined' && error) { %>
+                          <div class="alert alert-danger"><%= error %></div>
+                        <% } %>
+                        <div id="messages"></div>
+
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Slug</th>
+                                        <th>Created</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if(items && items.length){ %>
+                                        <% items.forEach(it => { %>
+                                            <tr data-id="<%= it._id %>">
+                                                <td>
+                                                    <input class="form-control form-control-sm title-input" value="<%= it.title %>" />
+                                                </td>
+                                                <td><code>/api/data/<%= it.slug %></code></td>
+                                                <td><%= new Date(it.createdAt).toLocaleString() %></td>
+                                                <td class="text-end">
+                                                    <button type="button" class="btn btn-sm btn-secondary me-2 btn-edit-data" data-id="<%= it._id %>" data-slug="<%= it.slug %>"><i class="fas fa-code me-1"></i>Edit Data</button>
+                                                    
+                                                    <button type="button" class="btn btn-sm btn-primary me-2 btn-save"><i class="fas fa-pen me-1"></i>Update</button>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger btn-delete">Delete</button>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <tr><td colspan="4" class="text-center text-muted">No data yet</td></tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JSON Editor Modal (static in DOM) -->
+    <div id="editModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:1050;">
+        <div style="max-width:800px; width:90%; margin:60px auto; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.2);">
+            <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                <strong>Edit Data JSON</strong>
+                <button type="button" id="modalClose" class="btn btn-sm btn-outline-secondary">Close</button>
+            </div>
+            <div class="p-3">
+                <div class="mb-2 small text-muted">Update the JSON for: <code id="modalSlug"></code></div>
+                <textarea id="modalTextarea" class="form-control" rows="14" style="font-family:monospace"></textarea>
+            </div>
+            <div class="p-3 border-top d-flex justify-content-end gap-2">
+                <input type="hidden" id="modalDatasetId" />
+                <button type="button" id="modalSave" class="btn btn-primary"><i class="fas fa-save me-1"></i>Save</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+console.log('MyDatasets: script loaded');
+const messages = document.getElementById('messages');
+function showMsg(kind, text){
+  messages.innerHTML = `<div class="alert alert-${kind} alert-dismissible fade show" role="alert">${text}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>`;
+}
+
+document.addEventListener('click', async (e)=>{
+  const row = e.target.closest('tr[data-id]');
+  if(!row) return;
+  const id = row.getAttribute('data-id');
+  const saveBtn = e.target.closest('.btn-save');
+  const editBtn = e.target.closest('.btn-edit-data');
+  const delBtn = e.target.closest('.btn-delete');
+  if(saveBtn){
+    const title = row.querySelector('.title-input').value.trim();
+    console.log('Update title clicked', { id, title });
+    const res = await fetch('/my/datasets/update', {
+      method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ id, title })
+    });
+    if(res.ok){ showMsg('success', 'Saved successfully'); } else { showMsg('danger', 'Update failed'); }
+  }
+  if(editBtn){
+    const idVal = editBtn.getAttribute('data-id') || row.getAttribute('data-id');
+    const slug = editBtn.getAttribute('data-slug') || row.querySelector('code').textContent.split('/').pop();
+    console.log('Edit Data clicked', { id: idVal, slug });
+    try { openEditor(idVal, slug); } catch(err){ console.error('openEditor error', err); }
+  }
+  if(delBtn){
+    console.log('Delete clicked', { id });
+    const res = await fetch('/my/datasets/delete', {
+      method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ id })
+    });
+    if(res.ok){ row.remove(); showMsg('success', 'Deleted successfully'); } else { showMsg('danger', 'Delete failed'); }
+  }
+});
+
+// Simple modal editor
+function openEditor(id, slug){
+  console.log('Opening editor modal', { id, slug });
+  const modal = document.getElementById('editModal');
+  const ta = document.getElementById('modalTextarea');
+  const slugEl = document.getElementById('modalSlug');
+  const idEl = document.getElementById('modalDatasetId');
+  slugEl.textContent = slug;
+  idEl.value = id;
+  ta.value = '{\n  "loading": true\n}';
+  modal.style.display = 'block';
+  fetch('/api/data/' + slug)
+    .then(r => r.ok ? r.json() : Promise.reject(r))
+    .then(data => { console.log('Loaded JSON', data); ta.value = JSON.stringify(data, null, 2); })
+    .catch((err)=> { console.error('Load JSON failed', err); showMsg('danger', 'Failed to load current data JSON'); ta.value = '{\n  "error": "Failed to load"\n}'; });
+}
+
+async function saveEditor(){
+  const id = document.getElementById('modalDatasetId').value;
+  const ta = document.getElementById('modalTextarea');
+  const dataStr = ta.value.trim();
+  console.log('Saving JSON', { id, length: dataStr.length });
+  try { JSON.parse(dataStr); } catch(_){ showMsg('danger', 'Invalid JSON'); return; }
+  const res = await fetch('/my/datasets/update-data', { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body: new URLSearchParams({ id, data: dataStr }) });
+  if(res.ok){ console.log('Save ok'); showMsg('success', 'Data updated'); document.getElementById('editModal').style.display = 'none'; } else { console.error('Save failed', res.status); showMsg('danger', 'Update failed'); }
+}
+
+// Bind modal controls once
+document.getElementById('modalClose').addEventListener('click', ()=>{ document.getElementById('editModal').style.display = 'none'; });
+document.getElementById('modalSave').addEventListener('click', saveEditor);
+</script>
+</body>
+</html>
+
+

@@ -7,13 +7,14 @@ function setUser(user){
         _id : user._id,
         email: user.email,
     };
-    return jwt.sign(payload, process.env.secretKey)
+    return jwt.sign(payload, process.env.secretKey);
 }
 
 function getUser(token){
     if(!token) return null;
     try {
-        return jwt.verify(token, process.env.secretKey)
+        // console.log("jwt returns",jwt.verify(token, process.env.secretKey));
+        return jwt.verify(token, process.env.secretKey);
     } catch (error) {
         console.error('JWT verification error:', error.message);
         return null;

@@ -1,9 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-gradient py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-    <div class="container">
+    <div class="container gap-4">
         <!-- Brand/Logo -->
         <a class="navbar-brand fw-bold" href="/">
             <i class="fas fa-rocket me-2"></i>
-            API Dashboard
+            APIs Handling
         </a>
 
         <!-- Mobile Toggle Button -->
@@ -21,16 +21,24 @@
                         Home
                     </a>
                 </li>
+                <% if(typeof user !== 'undefined' && user){ %>
                 <li class="nav-item">
-                    <a class="nav-link <%= typeof title !== 'undefined' && title === 'Users API' ? 'active' : '' %>" href="/api/users">
-                        <i class="fas fa-users me-1"></i>
-                        Users API
+                    <a class="nav-link <%= typeof title !== 'undefined' && title === 'Dashboard' ? 'active' : '' %>" href="/dashboard">
+                        <i class="fas fa-tachometer-alt me-1"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <% } %>
+                <li class="nav-item">
+                    <a class="nav-link <%= typeof title !== 'undefined' && title === 'External API' ? 'active' : '' %>" href="/external">
+                        <i class="fas fa-globe me-1"></i>
+                        External API
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <%= typeof title !== 'undefined' && title === 'External API' ? 'active' : '' %>" href="/nusers">
-                        <i class="fas fa-globe me-1"></i>
-                        External API
+                    <a class="nav-link <%= typeof title !== 'undefined' && title === 'Documentation' ? 'active' : '' %>" href="/docs">
+                        <i class="fas fa-book me-1"></i>
+                        Docs
                     </a>
                 </li>
             </ul>
@@ -38,7 +46,7 @@
             <!-- Right Side Items -->
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+                    <a class="nav-link dropdown-toggle" href="javascript:void(0)" id="navbarDropdown" role="button" 
                        data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-cog me-1"></i>
                         API Tools
@@ -48,21 +56,29 @@
                             <i class="fas fa-code me-2"></i>JSON API
                         </a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#" onclick="showApiInfo()">
+                        <li><a class="dropdown-item" href="javascript:void(0)" onclick="showApiInfo()">
                             <i class="fas fa-info-circle me-2"></i>API Info
                         </a></li>
                     </ul>
                 </li>
                 
-                <!-- Logout Button - Only show when user is logged in -->
-                <!-- <% if (typeof user !== 'undefined' && user) { %> -->
-                    <li class="nav-item">
-                        <a class="nav-link logout-btn" href="/logout" onclick="">
-                            <i class="fas fa-sign-out-alt me-1"></i>
-                            Logout
-                        </a>
-                    </li>
-                <!-- <% } %> -->
+                <!-- Auth button -->
+                <% if (typeof user !== 'undefined' && user) { %>
+                <li class="nav-item">
+                    <a class="nav-link logout-btn" href="/logout" onclick="return confirmLogout()">
+                        <i class="fas fa-sign-out-alt me-1"></i>
+                        Logout
+                    </a>
+                </li>
+                <% } else { %>
+                <li class="nav-item">
+                    <a class="nav-link logout-btn" href="/login">
+                        <i class="fas fa-sign-in-alt me-1"></i>
+                        Login
+                    </a>
+                </li>
+                <% } %>
+               
             </ul>
         </div>
     </div>
@@ -147,6 +163,7 @@
 </style>
 
 <!-- JavaScript for navbar functionality -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     function showApiInfo() {
         alert('API Dashboard\n\n• Users API: Local JSON data from MOCK_DATA.json\n• External API: Third-party data from environment variable\n• JSON API: Raw JSON response at /users endpoint');

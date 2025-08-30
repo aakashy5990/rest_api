@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <style>
+        body { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .cj-fluid { 
+            margin-left: 260px; 
+            padding: 0; 
+            width: calc(100% - 260px); 
+        }
+        .docs-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .docs-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .docs-section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            background: white;
+        }
+        .docs-section h3 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+        .code-block pre {
+            margin: 0;
+            color: #333;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .copy-btn:hover {
+            background: #5a6fd8;
+        }
+        .endpoint {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .method.get { background: #4caf50; color: white; }
+        .method.post { background: #ff9800; color: white; }
+        .method.put { background: #2196f3; color: white; }
+        .method.delete { background: #f44336; color: white; }
+        .table-of-contents {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .table-of-contents ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .table-of-contents li {
+            margin: 8px 0;
+        }
+        .table-of-contents a {
+            color: #667eea;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .table-of-contents a:hover {
+            background: #667eea;
+            color: white;
+        }
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .back-to-top:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <%- include('./partials/dasboardnav.ejs') %>
+    <%- include('./partials/sidebar.ejs') %>
+
+    <div class="container-fluid cj-fluid">
+        <div class="docs-container">
+            <!-- Header -->
+            <div class="docs-header">
+                <h1><i class="fas fa-book me-3"></i>API Documentation</h1>
+                <p class="mb-0">Complete guide to using the API Dashboard and fetching data</p>
+            </div>
+
+            <!-- Table of Contents -->
+            <div class="table-of-contents">
+                <h4><i class="fas fa-list me-2"></i>Table of Contents</h4>
+                <ul>
+                    <li><a href="#overview">📖 Overview</a></li>
+                    <li><a href="#getting-started">🚀 Getting Started</a></li>
+                    <li><a href="#authentication">🔐 Authentication</a></li>
+                    <li><a href="#endpoints">🔗 API Endpoints</a></li>
+                    <li><a href="#array-creation">📊 Array Data Creation</a></li>
+                    <li><a href="#examples">💡 Usage Examples</a></li>
+                    <li><a href="#error-handling">⚠️ Error Handling</a></li>
+                    <li><a href="#rate-limits">⏱️ Rate Limits</a></li>
+                    <li><a href="#support">💬 Support</a></li>
+                </ul>
+            </div>
+
+            <!-- Overview Section -->
+            <div class="docs-section" id="overview">
+                <h3><i class="fas fa-info-circle me-2"></i>Overview</h3>
+                <p>The API Dashboard is a comprehensive platform that allows users to:</p>
+                <ul>
+                    <li>Create and manage custom datasets with multiple entries</li>
+                    <li>Generate arrays of objects with consistent structure</li>
+                    <li>Access external API data</li>
+                    <li>Manage user data with full CRUD operations</li>
+                    <li>Generate and consume JSON APIs</li>
+                </ul>
+                
+                <div class="feature-card">
+                    <h5><i class="fas fa-star me-2"></i>Key Features</h5>
+                    <ul>
+                        <li><strong>User Authentication:</strong> Secure login system with JWT tokens</li>
+                        <li><strong>Data Management:</strong> Create, read, update, and delete datasets</li>
+                        <li><strong>API Generation:</strong> Automatic API endpoint generation for your data</li>
+                        <li><strong>External Integration:</strong> Fetch data from third-party APIs</li>
+                        <li><strong>Real-time Updates:</strong> Instant data synchronization</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Getting Started Section -->
+            <div class="docs-section" id="getting-started">
+                <h3><i class="fas fa-rocket me-2"></i>Getting Started</h3>
+                
+                <h5>1. Account Setup</h5>
+                <ol>
+                    <li>Visit the <a href="/signup">Sign Up</a> page to create an account</li>
+                    <li>Verify your email address</li>
+                    <li>Log in to access your dashboard</li>
+                </ol>
+
+                <h5>2. First Steps</h5>
+                <ol>
+                    <li>Navigate to your <a href="/dashboard">Dashboard</a></li>
+                    <li>Click "Add New Data" to create your first dataset</li>
+                    <li>Set the number of entries you want to create</li>
+                    <li>Add your data fields (name, type, value)</li>
+                    <li>Save your dataset - it will create multiple objects with the same structure</li>
+                </ol>
+
+                <h5>3. Accessing Your Data</h5>
+                <p>Once created, your data is automatically available at:</p>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                    <pre><code>GET /api/data/{your-slug}</code></pre>
+                </div>
+            </div>
+
+            <!-- Authentication Section -->
+            <div class="docs-section" id="authentication">
+                <h3><i class="fas fa-shield-alt me-2"></i>Authentication</h3>
+                
+                <p>Most API endpoints require authentication. Include your authentication token in the request headers:</p>
+                
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                    <pre><code>Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json</code></pre>
+                </div>
+
+                <h5>Getting Your Token</h5>
+                <ol>
+                    <li>Log in to your account</li>
+                    <li>Your token is automatically stored in cookies</li>
+                    <li>For programmatic access, extract the token from cookies</li>
+                </ol>
+
+                <div class="endpoint">
+                    <strong>Login Endpoint:</strong>
+                    <span class="method post">POST</span> <code>/login</code>
+                    <p class="mb-0 mt-2">Send your credentials to receive an authentication token.</p>
+                </div>
+            </div>
+
+            <!-- API Endpoints Section -->
+            <div class="docs-section" id="endpoints">
+                <h3><i class="fas fa-link me-2"></i>API Endpoints</h3>
+
+                <h5>Dataset Management</h5>
+                
+                <div class="endpoint">
+                    <strong>Create Dataset:</strong>
+                    <span class="method post">POST</span> <code>/adddata</code>
+                    <p class="mb-0 mt-2">Create a new dataset with title and JSON data.</p>
+                </div>
+
+                <div class="endpoint">
+                    <strong>Get Dataset:</strong>
+                    <span class="method get">GET</span> <code>/api/data/{slug}</code>
+                    <p class="mb-0 mt-2">Retrieve a specific dataset by its slug.</p>
+                </div>
+
+                <div class="endpoint">
+                    <strong>List My Datasets:</strong>
+                    <span class="method get">GET</span> <code>/my/datasets</code>
+                    <p class="mb-0 mt-2">Get all datasets owned by the authenticated user.</p>
+                </div>
+
+                <div class="endpoint">
+                    <strong>Update Dataset Title:</strong>
+                    <span class="method post">POST</span> <code>/my/datasets/update</code>
+                    <p class="mb-0 mt-2">Update the title of an existing dataset.</p>
+                </div>
+
+                <div class="endpoint">
+                    <strong>Update Dataset Data:</strong>
+                    <span class="method post">POST</span> <code>/my/datasets/update-data</code>
+                    <p class="mb-0 mt-2">Update the JSON data of an existing dataset.</p>
+                </div>
+
+                <div class="endpoint">
+                    <strong>Delete Dataset:</strong>
+                    <span class="method post">POST</span> <code>/my/datasets/delete</code>
+                    <p class="mb-0 mt-2">Delete a dataset permanently.</p>
+                </div>
+
+                <h5>External APIs</h5>
+                
+                <div class="endpoint">
+                    <strong>External API Data:</strong>
+                    <span class="method get">GET</span> <code>/external/nusers</code>
+                    <p class="mb-0 mt-2">Fetch data from external third-party APIs.</p>
+                </div>
+
+                <h5>User Management</h5>
+                
+                <div class="endpoint">
+                    <strong>User Data:</strong>
+                    <span class="method get">GET</span> <code>/api/users</code>
+                    <p class="mb-0 mt-2">Access local user data from MOCK_DATA.json.</p>
+                </div>
+            </div>
+
+            <!-- Array Data Creation Section -->
+            <div class="docs-section" id="array-creation">
+                <h3><i class="fas fa-layer-group me-2"></i>Array Data Creation</h3>
+                
+                <p>The Array Data Creation feature allows you to create structured datasets with multiple entries, each having the same field structure but different values. This is perfect for creating:</p>
+                <ul>
+                    <li><strong>Product Catalogs:</strong> Multiple products with name, price, description, images</li>
+                    <li><strong>User Lists:</strong> User profiles with name, email, role, avatar</li>
+                    <li><strong>Content Collections:</strong> Articles, posts, or media with titles, content, metadata</li>
+                    <li><strong>Inventory Systems:</strong> Items with SKU, quantity, location, status</li>
+                </ul>
+
+                <div class="feature-card">
+                    <h5><i class="fas fa-magic me-2"></i>How It Works</h5>
+                    <ol>
+                        <li><strong>Field Definition:</strong> Define the structure of your data (field names, types, defaults)</li>
+                        <li><strong>Entry Generation:</strong> Specify how many entries you want to create (1-20)</li>
+                        <li><strong>Data Entry:</strong> Fill in unique values for each entry through generated forms</li>
+                        <li><strong>Array Output:</strong> Get a JSON array of objects ready for API consumption</li>
+                    </ol>
+                </div>
+
+                <h5>Field Type Reference</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Example</th>
+                                <th>Validation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>text</code></td>
+                                <td>Regular text input</td>
+                                <td>"Product Name", "Description"</td>
+                                <td>Required field</td>
+                            </tr>
+                            <tr>
+                                <td><code>number</code></td>
+                                <td>Numeric values</td>
+                                <td>999, 29.99, 0</td>
+                                <td>Number format</td>
+                            </tr>
+                            <tr>
+                                <td><code>boolean</code></td>
+                                <td>True/false values</td>
+                                <td>true, false</td>
+                                <td>Dropdown selection</td>
+                            </tr>
+                            <tr>
+                                <td><code>email</code></td>
+                                <td>Email addresses</td>
+                                <td>user@example.com</td>
+                                <td>Email format</td>
+                            </tr>
+                            <tr>
+                                <td><code>image</code></td>
+                                <td>File uploads</td>
+                                <td>/uploads/filename.jpg</td>
+                                <td>Image files only</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h5>Real-World Examples</h5>
+                
+                <h6>E-commerce Product Catalog:</h6>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                    <pre><code>// Field Structure
+- Product Name (text)
+- Price (number)
+- Category (text)
+- In Stock (boolean)
+- Image (image)
+
+// Generated Array
+[
+  {
+    "Product Name": "MacBook Pro",
+    "Price": 1299,
+    "Category": "Laptops",
+    "In Stock": true,
+    "Image": "/uploads/macbook.jpg"
+  },
+  {
+    "Product Name": "iPhone 15",
+    "Price": 799,
+    "Category": "Phones",
+    "In Stock": false,
+    "Image": "/uploads/iphone.jpg"
+  }
+]</code></pre>
+                </div>
+
+                <h6>User Management System:</h6>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                    <pre><code>// Field Structure
+- Full Name (text)
+- Email (email)
+- Role (text)
+- Active (boolean)
+- Avatar (image)
+
+// Generated Array
+[
+  {
+    "Full Name": "John Doe",
+    "Email": "john@company.com",
+    "Role": "Admin",
+    "Active": true,
+    "Avatar": "/uploads/john.jpg"
+  },
+  {
+    "Full Name": "Jane Smith",
+    "Email": "jane@company.com",
+    "Role": "User",
+    "Active": true,
+    "Avatar": "/uploads/jane.jpg"
+  }
+]</code></pre>
+                </div>
+
+                <h5>Best Practices</h5>
+                <div class="feature-card">
+                    <h6><i class="fas fa-lightbulb me-2"></i>Tips for Effective Array Data Creation</h6>
+                    <ul>
+                        <li><strong>Plan Your Structure:</strong> Design your field structure before creating entries</li>
+                        <li><strong>Use Descriptive Names:</strong> Choose clear, meaningful field names</li>
+                        <li><strong>Set Default Values:</strong> Use defaults to speed up data entry</li>
+                        <li><strong>Validate Data:</strong> Choose appropriate field types for validation</li>
+                        <li><strong>Keep It Consistent:</strong> Maintain the same structure across all entries</li>
+                        <li><strong>Test Your API:</strong> Verify your data works with your applications</li>
+                    </ul>
+                </div>
+
+                <h5>Common Use Cases</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="feature-card">
+                            <h6><i class="fas fa-shopping-cart me-2"></i>E-commerce</h6>
+                            <ul>
+                                <li>Product catalogs</li>
+                                <li>Inventory management</li>
+                                <li>Customer reviews</li>
+                                <li>Order tracking</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="feature-card">
+                            <h6><i class="fas fa-users me-2"></i>User Management</h6>
+                            <ul>
+                                <li>User profiles</li>
+                                <li>Employee directories</li>
+                                <li>Contact lists</li>
+                                <li>Team management</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage Examples Section -->
+            <div class="docs-section" id="examples">
+                <h3><i class="fas fa-code me-2"></i>Usage Examples</h3>
+
+                <h5>Creating an Array Dataset</h5>
+                <p>The new array dataset creation allows you to create multiple objects with the same structure but different values. This is perfect for creating product catalogs, user lists, or any structured data arrays.</p>
+                
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                    <pre><code>POST /adddata
+Content-Type: multipart/form-data
+
+{
+  "title": "My Products",
+  "dataEntries": "[{\"Product Name\":\"Laptop\",\"Price\":999,\"Image\":\"__FILE_0_Product Name__\"},{\"Product Name\":\"Phone\",\"Price\":699,\"Image\":\"__FILE_1_Product Name__\"}]"
+}</code></pre>
+                </div>
+
+                <h6>Step-by-Step Process:</h6>
+                <ol>
+                    <li><strong>Define Field Structure:</strong> Add fields with name, type, and default value</li>
+                    <li><strong>Set Entry Count:</strong> Choose how many objects to create (1-20)</li>
+                    <li><strong>Generate Forms:</strong> Click "Generate" to create individual entry forms</li>
+                    <li><strong>Fill Data:</strong> Enter different values for each entry</li>
+                    <li><strong>Submit:</strong> Creates an array of objects with your data</li>
+                </ol>
+
+                <h6>Supported Field Types:</h6>
+                <ul>
+                    <li><strong>Text:</strong> Regular text input</li>
+                    <li><strong>Number:</strong> Numeric values with validation</li>
+                    <li><strong>Boolean:</strong> True/false dropdown</li>
+                    <li><strong>Email:</strong> Email format validation</li>
+                    <li><strong>Image:</strong> File upload for images</li>
+                </ul>
+
+                <h5>Fetching a Dataset</h5>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                    <pre><code>GET /api/data/my-sample-data
+
+Response:
+[
+  {
+    "Est et excepteur eni": "/uploads/987aa7a27f547c8d469c353df509de52",
+    "Veritatis sint veni": "aakash"
+  },
+  {
+    "Est et excepteur eni": "/uploads/987aa7a27f547c8d469c353df509de52",
+    "Veritatis sint veni": "aakash"
+  },
+  {
+    "Est et excepteur eni": "/uploads/987aa7a27f547c8d469c353df509de52",
+    "Veritatis sint veni": "aakash"
+  }
+]</code></pre>
+                </div>
+
+                <h5>Updating Dataset Title</h5>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                    <pre><code>POST /my/datasets/update
+Content-Type: application/x-www-form-urlencoded
+
+id=64f8a1b2c3d4e5f6a7b8c9d0&title=Updated Title</code></pre>
+                </div>
+
+                <h5>JavaScript Examples</h5>
+                
+                <h6>Fetching Array Data:</h6>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                    <pre><code>// Fetch a dataset (returns array of objects)
+async function fetchDataset(slug) {
+  try {
+    const response = await fetch(`/api/data/${slug}`);
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Dataset array:', data);
+      return data; // Returns array of objects
+    } else {
+      throw new Error('Failed to fetch dataset');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+// Example usage
+const products = await fetchDataset('my-products');
+products.forEach((product, index) => {
+  console.log(`Product ${index + 1}:`, product.name, '- $' + product.price);
+});</code></pre>
+                </div>
+
+                <h6>Creating Array Dataset:</h6>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                    <pre><code>// Create a new array dataset
+async function createArrayDataset(title, entries) {
+  try {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('dataEntries', JSON.stringify(entries));
+    
+    const response = await fetch('/adddata', {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      console.log('Array dataset created:', result);
+      return result;
+    } else {
+      throw new Error('Failed to create dataset');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+// Example: Create product catalog
+const productEntries = [
+  { "Product Name": "Laptop", "Price": 999, "Category": "Electronics" },
+  { "Product Name": "Phone", "Price": 699, "Category": "Electronics" },
+  { "Product Name": "Tablet", "Price": 399, "Category": "Electronics" }
+];
+
+await createArrayDataset('Product Catalog', productEntries);</code></pre>
+                </div>
+            </div>
+
+            <!-- Error Handling Section -->
+            <div class="docs-section" id="error-handling">
+                <h3><i class="fas fa-exclamation-triangle me-2"></i>Error Handling</h3>
+
+                <h5>Common HTTP Status Codes</h5>
+                <ul>
+                    <li><strong>200 OK:</strong> Request successful</li>
+                    <li><strong>201 Created:</strong> Resource created successfully</li>
+                    <li><strong>400 Bad Request:</strong> Invalid request data</li>
+                    <li><strong>401 Unauthorized:</strong> Authentication required</li>
+                    <li><strong>403 Forbidden:</strong> Access denied</li>
+                    <li><strong>404 Not Found:</strong> Resource not found</li>
+                    <li><strong>500 Internal Server Error:</strong> Server error</li>
+                </ul>
+
+                <h5>Error Response Format</h5>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                    <pre><code>{
+  "error": "Error message description",
+  "status": 400,
+  "timestamp": "2024-01-15T10:30:00.000Z"
+}</code></pre>
+                </div>
+
+                <h5>Handling Errors in JavaScript</h5>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyToClipboard(this)">Copy</button>
+                    <pre><code>async function handleApiCall() {
+  try {
+    const response = await fetch('/api/data/example');
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `HTTP ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('API Error:', error.message);
+    // Handle error appropriately
+    showErrorMessage(error.message);
+  }</code></pre>
+                </div>
+            </div>
+
+            <!-- Rate Limits Section -->
+            <div class="docs-section" id="rate-limits">
+                <h3><i class="fas fa-tachometer-alt me-2"></i>Rate Limits</h3>
+                
+                <p>To ensure fair usage and system stability, the following rate limits apply:</p>
+                
+                <ul>
+                    <li><strong>Authentication:</strong> 5 login attempts per minute</li>
+                    <li><strong>API Requests:</strong> 100 requests per minute per user</li>
+                    <li><strong>Data Creation:</strong> 10 new datasets per hour per user</li>
+                    <li><strong>Data Updates:</strong> 50 updates per hour per user</li>
+                </ul>
+
+                <div class="endpoint">
+                    <strong>Rate Limit Headers:</strong>
+                    <p class="mb-0 mt-2">Response headers include rate limit information:</p>
+                    <code>X-RateLimit-Limit: 100</code><br>
+                    <code>X-RateLimit-Remaining: 95</code><br>
+                    <code>X-RateLimit-Reset: 1642233600</code>
+                </div>
+            </div>
+
+            <!-- Support Section -->
+            <div class="docs-section" id="support">
+                <h3><i class="fas fa-life-ring me-2"></i>Support</h3>
+                
+                <p>Need help? Here are the ways to get support:</p>
+                
+                <div class="feature-card">
+                    <h5><i class="fas fa-book-open me-2"></i>Documentation</h5>
+                    <p>This documentation page contains comprehensive information about all features.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h5><i class="fas fa-comments me-2"></i>Community</h5>
+                    <p>Join our community forum to ask questions and share experiences.</p>
+                </div>
+
+                <div class="feature-card">
+                    <h5><i class="fas fa-envelope me-2"></i>Contact</h5>
+                    <p>For technical support, email us at: <a href="mailto:support@apidashboard.com">support@apidashboard.com</a></p>
+                </div>
+
+                <div class="feature-card">
+                    <h5><i class="fas fa-bug me-2"></i>Bug Reports</h5>
+                    <p>Found a bug? Report it through our issue tracker with detailed steps to reproduce.</p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-center mt-5 pt-4 border-top">
+                <p class="text-muted">
+                    <i class="fas fa-heart text-danger"></i> 
+                    Built with love for developers. 
+                    <a href="/dashboard" class="text-decoration-none">Back to Dashboard</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" onclick="scrollToTop()" title="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <script>
+        // Copy to clipboard functionality
+        function copyToClipboard(button) {
+            const codeBlock = button.nextElementSibling;
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.background = '#4caf50';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '#667eea';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                button.textContent = 'Failed';
+                button.style.background = '#f44336';
+                
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.style.background = '#667eea';
+                }, 2000);
+            });
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Back to top functionality
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Show/hide back to top button
+        window.addEventListener('scroll', () => {
+            const backToTop = document.querySelector('.back-to-top');
+            if (window.pageYOffset > 300) {
+                backToTop.style.display = 'block';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+
+        // Initialize back to top button as hidden
+        document.querySelector('.back-to-top').style.display = 'none';
+    </script>
+</body>
+</html>

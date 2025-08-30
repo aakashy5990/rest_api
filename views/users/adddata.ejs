@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Add Data' %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0; }
+        .cj-fluid { margin-left: 260px; padding: 0; width: calc(100% - 260px); }
+        .builder-container .row { margin-top: 0 !important; margin-right: 0 !important; }
+    </style>
+</head>
+<body>
+    <%- include('../partials/dasboardnav.ejs') %>
+    <%- include('../partials/sidebar.ejs') %>
+
+    <div class="container-fluid cj-fluid">
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="builder-container mx-auto">
+                <div class="card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-plus-square me-2"></i>Add Data</h5>
+                        <% if (typeof link !== 'undefined' && link) { %>
+                          <span class="badge text-bg-success">API: <code><%= link %></code></span>
+                        <% } %>
+                    </div>
+                    <div class="card-body">
+                        <% if (typeof error !== 'undefined' && error) { %>
+                          <div class="alert alert-danger"><%= error %></div>
+                        <% } %>
+                        <% if (typeof success !== 'undefined' && success) { %>
+                          <div class="alert alert-success"><%= success %> • Link: <a href="<%= link %>" target="_blank"><%= link %></a></div>
+                        <% } %>
+
+                        <form id="addDataForm" method="POST" action="/adddata" enctype="multipart/form-data">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Title</label>
+                                    <input name="title" class="form-control" placeholder="e.g., Product" required />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Number of Entries</label>
+                                    <input type="number" id="numEntries" class="form-control" value="3" min="1" max="20" />
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end gap-2">
+                                    <button type="button" id="addFieldBtn" class="btn btn-primary"><i class="fas fa-plus me-1"></i>Add Field</button>
+                                    <button type="button" id="generateEntriesBtn" class="btn btn-success"><i class="fas fa-magic me-1"></i>Generate</button>
+                                </div>
+                            </div>
+
+                            <!-- Field Definition Section -->
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Field Structure</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm align-middle table-borderless">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:40%">Field Name</th>
+                                                    <th style="width:25%">Type</th>
+                                                    <th style="width:25%">Default Value</th>
+                                                    <th style="width:10%"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="fieldsTable"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Data Entries Section -->
+                            <div class="card mb-3" id="entriesSection" style="display: none;">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-database me-2"></i>Data Entries</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="entriesContainer"></div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="dataEntries" id="dataEntriesPayload" />
+
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success"><i class="fas fa-save me-1"></i>Create Array Dataset</button>
+                                <a href="/my/datasets" class="btn btn-success text-decoration-none"><i class="fas fa-list me-1"></i>My Data</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fieldsTable = document.getElementById('fieldsTable');
+        const addFieldBtn = document.getElementById('addFieldBtn');
+        const generateEntriesBtn = document.getElementById('generateEntriesBtn');
+        const entriesSection = document.getElementById('entriesSection');
+        const entriesContainer = document.getElementById('entriesContainer');
+        const dataEntriesPayload = document.getElementById('dataEntriesPayload');
+
+        let fieldStructure = [];
+
+        function addFieldRow() {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><input class="form-control form-control-sm field-name" placeholder="Field name" required /></td>
+                <td>
+                    <select class="form-select form-select-sm field-type">
+                        <option value="text">Text</option>
+                        <option value="number">Number</option>
+                        <option value="boolean">Boolean</option>
+                        <option value="email">Email</option>
+                        <option value="image">Image</option>
+                    </select>
+                </td>
+                <td><input class="form-control form-control-sm field-default" placeholder="Default value" /></td>
+                <td class="text-end"><button type="button" class="btn btn-sm btn-outline-danger remove-field-btn"><i class="fas fa-times"></i></button></td>`;
+
+            const removeBtn = tr.querySelector('.remove-field-btn');
+            removeBtn.addEventListener('click', () => tr.remove());
+            fieldsTable.appendChild(tr);
+        }
+
+        function generateEntries() {
+            // Get field structure
+            const rows = Array.from(fieldsTable.querySelectorAll('tr'));
+            fieldStructure = rows.map(tr => ({
+                name: tr.querySelector('.field-name')?.value?.trim(),
+                type: tr.querySelector('.field-type')?.value,
+                defaultValue: tr.querySelector('.field-default')?.value?.trim()
+            })).filter(f => f.name);
+
+            if (fieldStructure.length === 0) {
+                alert('Please add at least one field before generating entries.');
+                return;
+            }
+
+            const numEntries = parseInt(document.getElementById('numEntries').value) || 3;
+            
+            // Clear previous entries
+            entriesContainer.innerHTML = '';
+
+            // Generate entry forms
+            for (let i = 0; i < numEntries; i++) {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'card mb-3';
+                entryDiv.innerHTML = `
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-file-alt me-2"></i>Entry ${i + 1}</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3" data-entry-index="${i}">
+                            ${fieldStructure.map((field, fieldIndex) => {
+                                const fieldId = `entry_${i}_field_${fieldIndex}`;
+                                if (field.type === 'image') {
+                                    return `
+                                        <div class="col-md-6">
+                                            <label class="form-label">${field.name}</label>
+                                            <input type="file" name="${fieldId}" accept="image/*" class="form-control entry-input" data-field-name="${field.name}" data-field-type="${field.type}" />
+                                        </div>`;
+                                } else if (field.type === 'boolean') {
+                                    return `
+                                        <div class="col-md-6">
+                                            <label class="form-label">${field.name}</label>
+                                            <select class="form-select entry-input" data-field-name="${field.name}" data-field-type="${field.type}">
+                                                <option value="true" ${field.defaultValue === 'true' ? 'selected' : ''}>true</option>
+                                                <option value="false" ${field.defaultValue === 'false' ? 'selected' : ''}>false</option>
+                                            </select>
+                                        </div>`;
+                                } else if (field.type === 'number') {
+                                    return `
+                                        <div class="col-md-6">
+                                            <label class="form-label">${field.name}</label>
+                                            <input type="number" class="form-control entry-input" value="${field.defaultValue || ''}" data-field-name="${field.name}" data-field-type="${field.type}" />
+                                        </div>`;
+                                } else if (field.type === 'email') {
+                                    return `
+                                        <div class="col-md-6">
+                                            <label class="form-label">${field.name}</label>
+                                            <input type="email" class="form-control entry-input" value="${field.defaultValue || ''}" data-field-name="${field.name}" data-field-type="${field.type}" />
+                                        </div>`;
+                                } else {
+                                    return `
+                                        <div class="col-md-6">
+                                            <label class="form-label">${field.name}</label>
+                                            <input type="text" class="form-control entry-input" value="${field.defaultValue || ''}" data-field-name="${field.name}" data-field-type="${field.type}" />
+                                        </div>`;
+                                }
+                            }).join('')}
+                        </div>
+                    </div>`;
+                entriesContainer.appendChild(entryDiv);
+            }
+
+            entriesSection.style.display = 'block';
+        }
+
+        addFieldBtn.addEventListener('click', addFieldRow);
+        generateEntriesBtn.addEventListener('click', generateEntries);
+
+        document.getElementById('addDataForm').addEventListener('submit', (e) => {
+            // Collect all entry data
+            const entries = [];
+            const entryRows = entriesContainer.querySelectorAll('[data-entry-index]');
+
+            entryRows.forEach((entryRow, entryIndex) => {
+                const entryData = {};
+                const inputs = entryRow.querySelectorAll('.entry-input');
+
+                inputs.forEach(input => {
+                    const fieldName = input.dataset.fieldName;
+                    const fieldType = input.dataset.fieldType;
+
+                    if (fieldType === 'image' && input.files && input.files[0]) {
+                        // For images, we'll handle this in the controller
+                        entryData[fieldName] = `__FILE_${entryIndex}_${fieldName}__`;
+                    } else if (fieldType === 'number') {
+                        entryData[fieldName] = input.value ? parseFloat(input.value) : 0;
+                    } else if (fieldType === 'boolean') {
+                        entryData[fieldName] = input.value === 'true';
+                    } else {
+                        entryData[fieldName] = input.value || '';
+                    }
+                });
+
+                entries.push(entryData);
+            });
+
+            dataEntriesPayload.value = JSON.stringify(entries);
+        });
+    </script>
+</body>
+</html>
+
+

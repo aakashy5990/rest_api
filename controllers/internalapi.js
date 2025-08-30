@@ -1,12 +1,14 @@
 const users = require('../MOCK_DATA.json');
 
 exports.getusers = (req,res) =>{
-    if(users.length > 0){
-        return res.render('home',{users, error:null});
-    }
-    else{
-        return res.status(404).render('home',{users:[] , error:'No users Found'});
-    }
+    // console.log("this is user ?",req.user);
+    // if(users.length > 0){
+    //     return res.render('home',{users, error:null});
+    // }
+    // else{
+    //     return res.status(404).render('home',{users:[] , error:'No users Found'});
+    // }
+    return res.render('home');
 }
 
 exports.getuserbyid = (req,res) =>{

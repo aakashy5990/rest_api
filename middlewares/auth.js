@@ -15,6 +15,7 @@ function restrictToLoggedinUserOnly(req, res, next){
             console.log('Invalid or expired token, redirecting to login');
             return res.redirect("/login");
         }
+        // console.log('this is the user ?',user);
 
         req.user = user;
         next();
@@ -24,21 +25,5 @@ function restrictToLoggedinUserOnly(req, res, next){
     }
 }
 
-// Middleware to add user data to all views
-function addUserToLocals(req, res, next) {
-    try {
-        const userUid = req.cookies?.uid;
-        if (userUid) {
-            const user = getUser(userUid);
-            if (user) {
-                res.locals.user = user;
-            }
-        }
-        next();
-    } catch (error) {
-        console.error('Error adding user to locals:', error);
-        next();
-    }
-}
 
-module.exports = { restrictToLoggedinUserOnly, addUserToLocals }
+module.exports = { restrictToLoggedinUserOnly }

@@ -1,7 +1,9 @@
 const fs = require("fs");
+const path = require("path");
 const mongoose = require("mongoose");
 const cookieParser = require('cookie-parser');
 const { restrictToLoggedinUserOnly } = require("./middlewares/auth");
+const { getUser } = require("./service/auth");
 // import maintenance middleware
 const { maintenanceMiddleware } = require("./middlewares/maintenanceMiddleware");
 
@@ -29,21 +31,41 @@ app.use(express.json());
 // adding form data in body 
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+// Ensure uploads directory exists
+const uploadsDir = path.join(__dirname, 'public', 'uploads');
+try { fs.mkdirSync(uploadsDir, { recursive: true }); } catch (e) {}
 app.use(express.static('public'));
+
+// Expose authenticated user to all views
+app.use((req, res, next) => {
+    try {
+        const token = req.cookies?.uid;
+        res.locals.user = token ? getUser(token) : null;
+    } catch (err) {
+        res.locals.user = null;
+    }
+    next();
+});
 
 // Use environment variables
 const PORT = process.env.PORT || 3000;
 const URI = process.env.MongoUrl;
 
 mongoose.connect(URI)
-  .then(() => console.log("✅ MongoDB connected successfully"))
+  .then(() => {
+    console.log("✅ MongoDB connected successfully");
+    try {
+      const dbName = mongoose.connection.name || mongoose.connection.db?.databaseName;
+      if (dbName) console.log(`🗄️  MongoDB database: ${dbName}`);
+    } catch (_) {}
+  })
   .catch(err => console.error("❌ MongoDB connection error:", err));
 
   
 app.use(staticRoute);
+app.use('/api', internalapi);
 app.use(userRoute);
-app.use(internalapi,restrictToLoggedinUserOnly);
-app.use(externalapi);
+app.use('/external', externalapi);
 
 
 app.get("/users", (req,res) => {
