@@ -28,10 +28,8 @@ app.set('view engine', 'ejs');
 app.use(maintenanceMiddleware);
 
 // Middleware
-app.use(express.urlencoded({ extended: true })); // to parse form POST data
 app.use(express.json());
-// adding form data in body 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true })); // to parse form POST data
 app.use(cookieParser());
 // Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'public', 'uploads');
@@ -70,7 +68,6 @@ mongoose.connect(process.env.MONGODB_URI)
     }
 
     console.log("✅ Done hashing passwords");
-    process.exit();
   })
   .catch(err => console.error(err));
   

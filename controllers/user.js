@@ -117,7 +117,8 @@ async function handleUserlogin(req,res){
         }
 
         const token = setUser(user);
-        res.cookie("uid", token, { httpOnly: true });
+        res.cookie("uid", token, { httpOnly: true, secure: false, sameSite: "lax" });
+
         return res.redirect("/");
     }catch(err){
         console.error("Login error", err);
