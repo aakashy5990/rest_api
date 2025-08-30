@@ -27,6 +27,7 @@ app.set('view engine', 'ejs');
 app.use(maintenanceMiddleware);
 
 // Middleware
+app.use(express.urlencoded({ extended: true })); // to parse form POST data
 app.use(express.json());
 // adding form data in body 
 app.use(express.urlencoded({ extended: false }));

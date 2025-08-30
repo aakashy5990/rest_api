@@ -2,22 +2,21 @@ const { getUser } = require("../service/auth");
 
 function restrictToLoggedinUserOnly(req, res, next){
     try {
-        const userUid = req.cookies?.uid;
+        const token = req.cookies?.uid;
 
-        if(!userUid) {
+        if(!token) {
             console.log('No user cookie found, redirecting to login');
             return res.redirect("/login");
         }
 
-        const user = getUser(userUid);
+        const user = getUser(token);
 
         if(!user) {
             console.log('Invalid or expired token, redirecting to login');
             return res.redirect("/login");
         }
-        // console.log('this is the user ?',user);
 
-        req.user = user;
+        req.user = user; // attach decoded user to request
         next();
     } catch (error) {
         console.error('Auth middleware error:', error);
@@ -25,5 +24,4 @@ function restrictToLoggedinUserOnly(req, res, next){
     }
 }
 
-
-module.exports = { restrictToLoggedinUserOnly }
+module.exports = { restrictToLoggedinUserOnly };
